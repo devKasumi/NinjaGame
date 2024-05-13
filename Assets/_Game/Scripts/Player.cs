@@ -18,6 +18,7 @@ public class Player : Character
     [SerializeField] private GameObject specialAttackButtonImage;
     [SerializeField] private GameObject redSpecialAttackButtonImage;
     [SerializeField] private float dashingPower = 400f;
+    [SerializeField] private FuryBar furyBar;
 
     private GameObject[] buttonArray;
     
@@ -42,7 +43,7 @@ public class Player : Character
 
     private float timer = 0f;
 
-    private static int attackCount = 0;
+    private static float attackCount = 0f;
 
     private void Awake()
     {
@@ -113,6 +114,7 @@ public class Player : Character
         DeActiveAttack(attackArea);
         DeActiveAttack(specialAttackArea);
         //DeActiveSpecialAttack();
+        furyBar.OnInit(attackCount);
 
         SavePoint();
         UIManager.GetInstance.SetCoin(coin);
@@ -144,7 +146,7 @@ public class Player : Character
         isAttack = true;
         Invoke(nameof(ResetAttack), 0.5f);
         ActiveAttack(attackArea);
-        CountAttackFromPlayer();
+        //CountAttackFromPlayer();
         Debug.LogError("attack count: " + attackCount);
         Invoke(nameof(DeActiveAttack), 0.5f);
     }
@@ -153,15 +155,15 @@ public class Player : Character
     {
         if (attackCount < 5)
         {
-            attackCount++;
-            if (attackCount == 5)
+            attackCount += 0.25f;
+            if (attackCount >= 1f)
             {
                 specialAttackArea.GetComponent<SpecialAttackArea>().SetRedSpecialAttack(true);
                 redSpecialAttackButtonImage.SetActive(true);
                 specialAttackButtonImage.SetActive(false);
             }
         }
-        else attackCount = 1;
+        else attackCount = 0f;
     }
 
     public void SpecialAttack()
@@ -213,9 +215,12 @@ public class Player : Character
 
     public void Jump()
     {
-        isjumping = true;
-        ChangeAnimation("jump");
-        rb.AddForce(jumpForce * Vector2.up);
+        if (isGrounded)
+        {
+            isjumping = true;
+            ChangeAnimation("jump");
+            rb.AddForce(jumpForce * Vector2.up);
+        }
     }
 
     public void Slide()
