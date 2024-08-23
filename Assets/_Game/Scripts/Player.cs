@@ -263,7 +263,7 @@ public class Player : Character
         {
             timer += Time.deltaTime;
             specialAttackButtonImage.GetComponent<Image>().fillAmount = timer / countdownSpecialAttack;
-            if (specialAttackButtonImage.GetComponent<Image>().fillAmount == 1f)
+            if (specialAttackButtonImage.GetComponent<Image>().fillAmount >= 0.95f)
             {
                 timer = 0f;
             }
